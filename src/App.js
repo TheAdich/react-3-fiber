@@ -1,11 +1,10 @@
 import React, { useRef, useState } from "react";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { OrbitControls, Stats, Html, Text } from "@react-three/drei";
-import LightHelp from "./LightHelp";
-//import RoomScene_Fixing2 from "./RoomScene_Fixing2";
-import { Model_Test } from "./Test";
-
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls, Stats, Html } from "@react-three/drei";
+import { Final_Room } from "./RoomScene6_Export";
 import TWEEN from "@tweenjs/tween.js";
+import ContentComponent from "./components/ContentComponent";
+import { FaAngleDoubleDown } from "react-icons/fa";
 
 //Creating function for sommoth camera transition!
 
@@ -82,7 +81,7 @@ const marks = [
     },
   },
 ];
-
+/*
 //a component creating a button as of now!
 function Annotations({ controls }) {
   const { camera } = useThree();
@@ -171,7 +170,7 @@ function Annotations({ controls }) {
       })}
     </React.Fragment>
   );
-}
+}*/
 
 //Tween component to update
 function Tween() {
@@ -180,31 +179,54 @@ function Tween() {
   });
 }
 
+
 export default function App() {
+  const contentRef = useRef(null);
+  const roomRef=useRef(null);
+
+  const scrollToContent = () => {
+    console.log("clicked!");
+    contentRef.current && contentRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
+  const scrollTo3D=()=>{
+    roomRef.current && roomRef.current.scrollIntoView({behavior:'smooth'});
+  }
+
+  const buttons=(
+    <React.Fragment>
+    <FaAngleDoubleDown className="content-btn" onClick={scrollToContent}/>
+    </React.Fragment>
+  )
   const ref = useRef();
 
   return (
-    <Canvas
-      camera={{
-        fov: 80,
-        position: [-2, 1.5, -1],
-      }}
-      shadows
-    >
-      <OrbitControls
-        ref={ref}
-        target={[-6,1.5,-5]}
-        enableZoom={true}
-        enableDamping={false}
-      />
-      <ambientLight intensity={1} castShadow />
-      
-     
-      {/* <Annotations controls={ref} /> */}
-      <Model_Test/>
-      <axesHelper/>
-      <Tween />
-      <Stats />
-    </Canvas>
+    <React.Fragment>
+      <Canvas
+        ref={roomRef}
+        camera={{
+          fov: 80, 
+          position: [-2, 1.5, -1],
+        }}
+        shadows
+      >
+        <OrbitControls
+          ref={ref}
+          target={[-6, 1.5, -5]}
+          enableZoom={true}
+          enableDamping={true}
+        />
+        <ambientLight intensity={1} castShadow />
+
+
+        {/* <Annotations controls={ref} /> */}
+        <Final_Room />
+        <axesHelper />
+        <Tween />
+        <Stats />
+      </Canvas>
+      <div id="ui">{buttons}</div>
+      <ContentComponent contentRef={contentRef} scrollTo3D={scrollTo3D}/>
+      </React.Fragment>
+
   );
 }
